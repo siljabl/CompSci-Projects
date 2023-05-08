@@ -35,6 +35,19 @@ def OLS_matrix_inversion(X, data):
     return beta
 
 
+def OLS_SVD(X, data):
+    '''
+    Performing ordinary least squares by singular matrix decomposition
+    '''
+    XTX = X.T @ X
+    U, S, VT = linalg.svd(XTX)
+    D_inv = np.diag(1/S)
+    
+    XTX_inv = VT.T @ D_inv @ U.T
+    beta = XTX_inv @ X.T @ data
+
+    return beta
+
 
 
 def error_bias2_variance(X, data, degree, n_bootstraps=500, test_size=0.2):
@@ -42,7 +55,7 @@ def error_bias2_variance(X, data, degree, n_bootstraps=500, test_size=0.2):
     Performing bias variance analysis and returning error, bias^2 and variance
     '''
 
-    # splitting data and design matrix in test and train 
+    # splitting data and design matrix in test and train sets
     X_train, X_test, y_train, y_test = train_test_split(X, data, test_size=test_size)
         
     # empty array for computing expectation value
@@ -53,28 +66,29 @@ def error_bias2_variance(X, data, degree, n_bootstraps=500, test_size=0.2):
         beta = OLS_matrix_inversion(X_, y_)
         y_pred[i] = X_test @ beta
 
-    error = np.mean( np.mean((y_test - y_pred)**2, axis=0, keepdims=True) )
-    bias2 = np.mean( (y_test - np.mean(y_pred, axis=0, keepdims=True))**2 )
-    variance = np.mean( np.var(y_pred, axis=0, keepdims=True) )
+    # compute expectation value of model prediction
+    Exp_y = np.mean(y_pred, axis=0) #, keepdims=True)
+
+    # compute error, bias and variance
+    error =    np.mean( (y_test - y_pred)**2 )
+    bias2 =    np.mean( (y_test -  Exp_y)**2 )
+    variance = np.mean( (y_pred -  Exp_y)**2 )
             
     return error, bias2, variance
 
 
 
-def bias_variance_tradeoff(data, n_bootstraps=500, max_degree=10, test_size=0.2):
+def bias_variance_tradeoff(data, design_arr, n_bootstraps=500, max_degree=10, test_size=0.2):
     '''
     Bias-variance tradeoff while looping through model complexity
     '''
     error = np.zeros(max_degree)
     bias2 = np.zeros(max_degree)
     var = np.zeros(max_degree)
-    
-    arr0 = np.linspace(0, 1, data.shape[0], endpoint=False)
-    arr1 = np.linspace(0, 1, data.shape[1], endpoint=False)
 
     for deg in range(max_degree):
         # defining design matrix
-        X = DesignMatrix(arr0, arr1, deg)
+        X = DesignMatrix(design_arr, design_arr, deg)
         
         error[deg], bias2[deg], var[deg] = error_bias2_variance(X, data, deg, n_bootstraps=n_bootstraps, test_size=test_size)
             

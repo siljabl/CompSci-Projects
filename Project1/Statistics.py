@@ -2,8 +2,7 @@ import numpy as np
 
 def MSE(data, model):
     'Mean square error'
-    n = data.size
-    
+        
     return np.mean( (data - model)**2 )
 
 
