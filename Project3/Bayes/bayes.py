@@ -5,47 +5,51 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats
 
+#import sample data
 data = pd.read_csv('C:/Users/franscho/Documents/CompSci-Projets/Project3/Bayes/example_data.txt', header = 0)
-#print(data)
 
 x = data.iloc[:,0]
 y = data.iloc[:,1]
 y_err = data.iloc[:,2]
 
+#plot sample data
 plt.errorbar(x, y, yerr=y_err, ls=' ', marker='x')
 plt.plot(x, y, ls=':', alpha=0.5, color='k')
 plt.xlabel('x')
 plt.ylabel('y')
 plt.show()
 
-param_names = ['location', 'amplitude', 'width']
+
+param_names = ['peak_location', 'peak_height', 'peak_number']
 
 def my_prior_transform(cube):
     params = cube.copy()
 
-    # transform location parameter: uniform prior
+    # location: uniform prior
     lo = 400
     hi = 800
     params[0] = cube[0] * (hi - lo) + lo
 
-    # transform amplitude parameter: log-uniform prior
+    # height: log-uniform prior
     lo = 0.1
     hi = 100
     params[1] = 10**(cube[1] * (np.log10(hi) - np.log10(lo)) + np.log10(lo))
 
-    # More complex prior, you can use the ppf functions
-    # from scipy.stats, such as scipy.stats.norm(mean, std).ppf
-
-    # transform for width:
-    # a log-normal centered at 1 +- 1dex
-    params[2] = 10**scipy.stats.norm.ppf(cube[2], 0, 1)
+    # number: uniform  prior
+    lo = 0
+    hi = 50
+    params[2] = cube[2] * (hi - lo) + lo
 
     return params
 
 def my_likelihood(params):
-    location, amplitude, width = params
+    location, height, number = params
+
+    # TODO - implement likelihood function
+    
+    
     # compute intensity at every x position according to the model
-    y_model = amplitude * np.exp(-0.5 * ((x - location)/width)**2)
+    y_model = height * np.exp(-0.5 * ((x - location)/number)**2)
     # compare model and data with gaussian likelihood:
     like = -0.5 * (((y_model - y)/y_err)**2).sum()
     return like
@@ -60,4 +64,3 @@ sampler.plot_trace()
 sampler.plot_corner()
 
 cornerplot(result)
-

@@ -1,4 +1,7 @@
 MNIST
 Project3/Bayes/
+Project3/Bayes/bayes.py
+Project3/Bayes/example_data.txt
 Project3/batch_rename.py
 Project3/load_image.py
+Project3/fig/
