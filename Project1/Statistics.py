@@ -13,3 +13,8 @@ def R2(data, model):
     
     return 1 - nom / denom
 
+
+
+# computing matrix norm and condition number
+def norm2(M):
+    return np.sqrt(np.sum(M**2))

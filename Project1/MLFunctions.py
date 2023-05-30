@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split, KFold
 from sklearn.utils import resample
 from sklearn.linear_model import Lasso
 
-from Statistics import MSE
+from Statistics import MSE, norm2
 
 def DesignMatrix(x, y, order):
     '''
@@ -162,3 +162,134 @@ def bias_variance_tradeoff(data, design_arr, resampling_method, method_params=0,
             error[deg], bias2[deg], var[deg] = cross_validation(X, data, test_size=test_size)
             
     return error, bias2, var
+
+
+
+def BFGS(f, gradf, X0, tolerance=1e-6, max_iterations=10000, print_f=False) :
+    # flatten everything
+    X = np.copy(X0).flatten()   
+    f, gradf = flatten_function(f), flatten_gradient(gradf)
+    N_calls = 0
+    
+    if print_f: 
+        f_init = f(X)
+        N_calls += 1
+        print(f"\nInitial potential: {f_init:2.4f}")
+    
+    # preparing for loop
+    B_inv, converged = np.eye(len(X)), True
+    grad = gradf(X)
+    N_calls += 1
+    iterations = 0
+    
+    while np.sqrt(np.dot(grad,grad)) > tolerance :
+        # updating X
+        dX = -B_inv @ grad
+        X += dX
+        
+        # computing dY
+        grad_new = gradf(X) # function call
+        dY = grad_new - grad
+        grad = grad_new
+        
+        # updating matrix
+        BdY, dYB = B_inv @ dY, dY @ B_inv
+        B_inv += np.outer(dX,dX) / np.dot(dX,dY) - np.outer(BdY, dYB) / np.dot(dY,BdY)
+        
+        # breaking loop if to many iterations
+        if iterations >= max_iterations :
+            converged = False
+            break
+        
+        # updtaing iterations
+        N_calls += 1
+        iterations += 1
+  
+    if print_f:
+        f_fin = f(X)
+        N_calls += 1
+        print(f"Final potential: {f_fin:2.4f}")
+        
+    return X, N_calls, converged
+
+
+
+def newton_root(f,df,x0, tolerance=1e-12, max_iterations=1000) :
+    x, f_x = x0, f(x0)
+    n_calls = 1
+    
+    while abs(f_x) > tolerance:
+        x -= f_x/df(x)  # first call
+        f_x = f(x)      # second call
+        n_calls += 2
+        
+        if n_calls >= 2*max_iterations: break
+    
+    return x, n_calls
+
+
+
+
+def GradientDescent(X, data, learning_rate, eps=1e-8):
+    '''
+    Gradient descent with fixed learning rate
+    X: column vector
+    data:
+    gamma: learning rate
+    niter: number of iterations
+
+    
+    Add computation of cost function!
+    '''
+    ndata, ndims = np.shape(X)
+    beta = np.ones(ndims)
+    grad = (2.0 / ndata) * X.T @ (X @ beta - data)
+
+    cost = 0
+
+    niter = 0
+    while norm2(grad) > eps:
+        grad = (2.0 / ndata) * X.T @ (X @ beta - data)
+        beta -= learning_rate * grad
+
+        if niter > 100_000:
+            break
+
+        niter += 1
+
+
+
+    return beta, niter, cost
+
+
+
+def MomentumGradientDescent(X, data, learning_rate, gamma, eps=1e-8):
+    '''
+    Gradient descent with fixed learning rate and momentum/memory
+    X: column vector
+    data:
+    gamma: learning rate
+    niter: number of iterations
+
+    '''
+    ndata, ndims = np.shape(X)
+    beta = np.ones(ndims)
+    grad = (2.0 / ndata) * X.T @ (X @ beta - data)
+
+    cost = 0
+
+    niter = 0
+    while norm2(grad) > eps:
+        grad_prev = grad
+        grad = (2.0 / ndata) * X.T @ (X @ beta - data)
+        beta -= gamma * grad_prev + learning_rate * grad
+
+        if niter > 100_000:
+            break
+
+        niter += 1
+
+
+
+    return beta, niter, cost
+
