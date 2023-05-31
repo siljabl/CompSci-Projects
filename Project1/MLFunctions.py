@@ -230,66 +230,93 @@ def newton_root(f,df,x0, tolerance=1e-12, max_iterations=1000) :
 
 
 
-def GradientDescent(X, data, learning_rate, eps=1e-8):
+def GradientDescent(X, data, learning_rate, momentum=0, eps=1e-8, max_iter=100_000):
+    '''
+    Gradient descent with fixed learning rate
+
+    Inputs
+    X: column vector
+    data:
+    learning_rate: learning rate
+    momentum: rate of memory
+
+    Outputs
+    beta:
+    niter:
+    cost:
+    '''
+    ndata, ndims = np.shape(X)
+
+    # initial guesses for beta and the gradient
+    beta = np.random.rand(ndims)
+    grad = (2.0 / ndata) * X.T @ (X @ beta - data)
+
+    # count number of iteration
+    n_iter = 0
+    while norm2(grad) > eps:
+        grad_prev = grad
+        grad = (2.0 / ndata) * X.T @ (X @ beta - data)
+        beta = beta - momentum * grad_prev - learning_rate * grad
+
+        # break if takes too long
+        if n_iter > max_iter:
+            break
+
+        n_iter += 1
+
+    # compute cost
+    cost = norm2(X @ beta - data) / ndata
+
+    return beta, n_iter, cost
+
+
+
+def StochasticGradientDescent(X, data, momentum=0, nepochs=10, batch_size=5, eps=1e-8):
     '''
     Gradient descent with fixed learning rate
     X: column vector
     data:
     gamma: learning rate
-    niter: number of iterations
 
-    
-    Add computation of cost function!
+    Tunable learning rate
     '''
+    # ensure that batch_size is compatible with the size of our data
     ndata, ndims = np.shape(X)
-    beta = np.ones(ndims)
+    assert(ndata % batch_size == 0)
+    nbatches = int(ndata / batch_size)
+
+    # splitting up data in minibatches
+    X_batch = X.reshape(nbatches, batch_size, ndims)
+    data_batch = data.reshape(nbatches, batch_size)
+
+    # initial guesses for beta and the gradient
+    beta = np.random.rand(ndims)
     grad = (2.0 / ndata) * X.T @ (X @ beta - data)
 
-    cost = 0
-
-    niter = 0
-    while norm2(grad) > eps:
-        grad = (2.0 / ndata) * X.T @ (X @ beta - data)
-        beta -= learning_rate * grad
-
-        if niter > 100_000:
-            break
-
-        niter += 1
+    # compute learning rate
+    H = (2 / ndata) *  X.T @ X
+    eigVal, _ = np.linalg.eig(H)
+    learning_rate = 1 / np.max(eigVal)
 
 
+    for epoch in range(nepochs):
+        for batch in range(nbatches):
+            # pick random minibatch
+            idx = np.random.randint(nbatches)
+            X_, data_ = X_batch[idx], data_batch[idx]
 
-    return beta, niter, cost
+            # computing gradient over minibatch
+            grad_prev = grad
+            grad = (2.0 / batch_size) * X_.T @ (X_ @ beta - data_)
+        
+            # update beta
+            beta = beta - momentum * grad_prev - learning_rate * grad
+            # print(beta)
 
+    # compute cost
+    cost = norm2(X @ beta - data) / ndata
 
-
-def MomentumGradientDescent(X, data, learning_rate, gamma, eps=1e-8):
-    '''
-    Gradient descent with fixed learning rate and momentum/memory
-    X: column vector
-    data:
-    gamma: learning rate
-    niter: number of iterations
-
-    '''
-    ndata, ndims = np.shape(X)
-    beta = np.ones(ndims)
-    grad = (2.0 / ndata) * X.T @ (X @ beta - data)
-
-    cost = 0
-
-    niter = 0
-    while norm2(grad) > eps:
-        grad_prev = grad
-        grad = (2.0 / ndata) * X.T @ (X @ beta - data)
-        beta -= gamma * grad_prev + learning_rate * grad
-
-        if niter > 100_000:
-            break
-
-        niter += 1
+    return beta, cost
 
 
-
-    return beta, niter, cost
 

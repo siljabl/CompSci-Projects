@@ -15,6 +15,10 @@ def R2(data, model):
 
 
 
-# computing matrix norm and condition number
 def norm2(M):
     return np.sqrt(np.sum(M**2))
+
+
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
