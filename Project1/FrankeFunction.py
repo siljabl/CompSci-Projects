@@ -12,3 +12,12 @@ def FrankeFunction(x,y, noise=0):
     
     return term1 + term2 + term3 + term4 + noise
 
+
+
+def SimpleFunction(x, a):
+    '''
+    Second order polynomial
+    '''
+    a0, a1, a2 = a
+    
+    return a0 + a1*x + a2*x**2
