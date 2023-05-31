@@ -1,5 +1,7 @@
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C, ExpSineSquared as E
@@ -12,11 +14,11 @@ def franke_function(x, y):
     term4 = -0.2 * np.exp(-(9 * x - 4) ** 2 - (9 * y - 7) ** 2)
     return term1 + term2 + term3 + term4
 
-# Generate random points in functino space
-np.random.seed(0)
-n = 100
+# Generate random training points in functino space
+#np.random.seed(7)
+n = 20
 X = np.random.rand(n, 2)
-y = franke_function(X[:, 0], X[:, 1]) + np.random.randn(n) * 0.1
+y = franke_function(X[:, 0], X[:, 1]) + np.random.randn(n) * 0.01
 
 # Kernel for GPR
 kernel1 = RBF(0.1, (1e-3, 1e3))
@@ -25,7 +27,7 @@ kernel3 = C(1.0, (1e-3, 1e3)) * RBF(0.1, (1e-3, 1e3))
 kernel4 = E(0.1,  1.0)
 
 # Create model
-gpr = GaussianProcessRegressor(kernel=kernel4, n_restarts_optimizer=9)
+gpr = GaussianProcessRegressor(kernel=kernel3, n_restarts_optimizer=9)
 
 # Fit the model 
 gpr.fit(X, y)
@@ -36,6 +38,14 @@ X_pred = np.array([x1.flatten(), x2.flatten()]).T
 
 # Predict the function values 
 y_pred, sigma = gpr.predict(X_pred, return_std=True)
+print('The log marginal likelihood is: ', gpr.log_marginal_likelihood())
+
+# R2-score for predictions on test data
+r2 = gpr.score(X_pred, franke_function(X_pred[:, 0], X_pred[:, 1]))
+print('The R2-score for the predictions is: ', r2) 
+
+# ruond to two decimals for plotting
+r2 = r2.round(2)
 
 # Reshape for plotting
 y_pred = y_pred.reshape(x1.shape)
@@ -52,11 +62,13 @@ ax.set_title('Franke Function')
 
 # Plot predicted function values
 ax = fig.add_subplot(1, 2, 2, projection='3d')
-ax.plot_surface(x1, x2, y_pred, cmap='viridis')
+ax.plot_surface(x1, x2, y_pred, cmap='viridis', alpha=0.3)
+scat = ax.scatter(X[ :,0], X[ :,1], y, linewidth=0, antialiased=False)
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
-ax.set_title('GPR Prediction - ExpSineSq kernel')
+ax.set_title('GPR Prediction - R2 = '+ str(r2))
+
 
 plt.tight_layout()
 plt.show()
