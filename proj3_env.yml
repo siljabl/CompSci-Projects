@@ -1,4 +1,4 @@
-name: proj2_env
+name: proj3_env
 channels:
   - pytorch
   - nvidia
