@@ -1,10 +1,7 @@
 import numpy as np
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-from matplotlib import cm
-from mpl_toolkits.mplot3d import Axes3D
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C, ExpSineSquared as E
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C, ExpSineSquared as E, DotProduct as D
 
 # Franke function
 def franke_function(x, y):
@@ -25,9 +22,11 @@ kernel1 = RBF(0.1, (1e-3, 1e3))
 kernel2 = C(1.0, (1e-3, 1e3))
 kernel3 = C(1.0, (1e-3, 1e3)) * RBF(0.1, (1e-3, 1e3))
 kernel4 = E(0.1,  1.0)
+kernel5 = D(2, (1e-3, 1e3)) 
+kernel6 = kernel5 * kernel1
 
 # Create model
-gpr = GaussianProcessRegressor(kernel=kernel3, n_restarts_optimizer=9)
+gpr = GaussianProcessRegressor(kernel=kernel6, optimizer='fmin_l_bfgs_b', n_restarts_optimizer=9)
 
 # Fit the model 
 gpr.fit(X, y)
@@ -62,13 +61,12 @@ ax.set_title('Franke Function')
 
 # Plot predicted function values
 ax = fig.add_subplot(1, 2, 2, projection='3d')
-ax.plot_surface(x1, x2, y_pred, cmap='viridis', alpha=0.3)
+ax.plot_surface(x1, x2, y_pred, cmap='viridis', alpha=0.5)
 scat = ax.scatter(X[ :,0], X[ :,1], y, linewidth=0, antialiased=False)
 ax.set_xlabel('X')
 ax.set_ylabel('Y')
 ax.set_zlabel('Z')
 ax.set_title('GPR Prediction - R2 = '+ str(r2))
-
 
 plt.tight_layout()
 plt.show()
