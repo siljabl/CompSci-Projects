@@ -1,11 +1,3 @@
-@book{Rasmussen2006,
-author = {{C. E. Rasmussen {\&} C. K. I. Williams}},
-booktitle = {MIT Press},
-file = {:C$\backslash$:/Users/franscho/OneDrive - Universitetet i Oslo/Documents/UiO/Literature/Mendeley Desktop/C. E. Rasmussen {\&} C. K. I. Williams{\_}2006{\_}Gaussian Processes for Machine Learning.pdf:pdf},
-isbn = {026218253X},
-title = {{Gaussian Processes for Machine Learning}},
-year = {2006}
-}
 @article{Duvenaud2014,
 abstract = {This work was supported by the National Sciences and Engineering Research Council of Canada, the Cambridge Commonwealth Trust, Pembroke College, a grant from the Engineering and Physical Sciences Research Council, and a grant from Google.},
 author = {Duvenaud, David Kristjanson},
@@ -28,17 +20,20 @@ title = {{A critical comparison of some methods for interpolation of scattered d
 url = {http://www.dtic.mil/docs/citations/ADA081688},
 year = {1979}
 }
-@article{Williams1994,
-author = {Williams, Christopher K I and Rasmussen, Carl Edward},
-doi = {10.1016/0165-4896(94)90008-6},
-file = {:C$\backslash$:/Users/franscho/OneDrive - Universitetet i Oslo/Documents/UiO/Literature/Mendeley Desktop/Williams, Rasmussen{\_}1994{\_}Support theory a nonextensional representation of subjective probability. Amos Tversky, Department of Psychlogy.pdf:pdf},
-issn = {01654896},
-journal = {Mathematical Social Sciences},
-number = {3},
-pages = {224--225},
-title = {{Support theory: a nonextensional representation of subjective probability. Amos Tversky, Department of Psychlogy, Stanford University, Stanford, CA 94305-2130 USA}},
-volume = {28},
-year = {1994}
+@article{Wang2019,
+abstract = {Gaussian processes (GPs) are flexible non-parametric models, with a capacity that grows with the available data. However, computational constraints with standard inference procedures have limited exact GPs to problems with fewer than about ten thousand training points, necessitating approximations for larger datasets. In this paper, we develop a scalable approach for exact GPs that leverages multiGPU parallelization and methods like linear conjugate gradients, accessing the kernel matrix only through matrix multiplication. By partitioning and distributing kernel matrix multiplies, we demonstrate that an exact GP can be trained on over a million points, a task previously thought to be impossible with current computing hardware, in less than 2 hours. Moreover, our approach is generally applicable, without constraints to grid data or specific kernel classes. Enabled by this scalability, we perform the first-ever comparison of exact GPs against scalable GP approximations on datasets with 104 - 106 data points, showing dramatic performance improvements.},
+archivePrefix = {arXiv},
+arxivId = {1903.08114},
+author = {Wang, Ke Alexander and Pleiss, Geoff and Gardner, Jacob R. and Tyree, Stephen and Weinberger, Kilian Q. and Wilson, Andrew Gordon},
+eprint = {1903.08114},
+file = {:C$\backslash$:/Users/franscho/OneDrive - Universitetet i Oslo/Documents/UiO/Literature/Mendeley Desktop/Wang et al.{\_}2019{\_}Exact Gaussian processes on a million data points.pdf:pdf},
+issn = {10495258},
+journal = {Advances in Neural Information Processing Systems},
+number = {1},
+pages = {1--12},
+title = {{Exact Gaussian processes on a million data points}},
+volume = {32},
+year = {2019}
 }
 @article{Schulz2018,
 abstract = {This tutorial introduces the reader to Gaussian process regression as an expressive tool to model, actively explore and exploit unknown functions. Gaussian process regression is a powerful, non-parametric Bayesian approach towards regression problems that can be utilized in exploration and exploitation scenarios. This tutorial aims to provide an accessible introduction to these techniques. We will introduce Gaussian processes which generate distributions over functions used for Bayesian non-parametric regression, and demonstrate their use in applications and didactic examples including simple regression problems, a demonstration of kernel-encoded prior assumptions and compositions, a pure exploration scenario within an optimal design framework, and a bandit-like exploration–exploitation scenario where the goal is to recommend movies. Beyond that, we describe a situation modelling risk-averse exploration in which an additional constraint (not to sample below a certain threshold) needs to be accounted for. Lastly, we summarize recent psychological experiments utilizing Gaussian processes. Software and literature pointers are also provided.},
@@ -54,6 +49,26 @@ title = {{A tutorial on Gaussian process regression: Modelling, exploring, and e
 url = {https://doi.org/10.1016/j.jmp.2018.03.001},
 volume = {85},
 year = {2018}
+}
+@book{Rasmussen2006,
+author = {{C. E. Rasmussen {\&} C. K. I. Williams}},
+booktitle = {MIT Press},
+file = {:C$\backslash$:/Users/franscho/OneDrive - Universitetet i Oslo/Documents/UiO/Literature/Mendeley Desktop/C. E. Rasmussen {\&} C. K. I. Williams{\_}2006{\_}Gaussian Processes for Machine Learning.pdf:pdf},
+isbn = {026218253X},
+title = {{Gaussian Processes for Machine Learning}},
+year = {2006}
+}
+@article{Williams1994,
+author = {Williams, Christopher K I and Rasmussen, Carl Edward},
+doi = {10.1016/0165-4896(94)90008-6},
+file = {:C$\backslash$:/Users/franscho/OneDrive - Universitetet i Oslo/Documents/UiO/Literature/Mendeley Desktop/Williams, Rasmussen{\_}1994{\_}Support theory a nonextensional representation of subjective probability. Amos Tversky, Department of Psychlogy.pdf:pdf},
+issn = {01654896},
+journal = {Mathematical Social Sciences},
+number = {3},
+pages = {224--225},
+title = {{Support theory: a nonextensional representation of subjective probability. Amos Tversky, Department of Psychlogy, Stanford University, Stanford, CA 94305-2130 USA}},
+volume = {28},
+year = {1994}
 }
 @article{Pedregosa2011,
 abstract = {Scikit-learn is a Python module integrating a wide range of state-of-the-art machine learning algo- rithms for medium-scale supervised and unsupervised problems. This package focuses on bring- ing machine learning to non-specialists using a general-purpose high-level language. Emphasis is put on ease of use, performance, documentation, and API consistency. It has minimal dependen- cies and is distributed under the simplified BSD license, encouraging its use in both academic and commercial settings. Source code, binaries, and documentation can be downloaded from http://scikit-learn.sourceforge.net.},
