@@ -1,6 +1,6 @@
 # CompSci-Projects
 
-In this repository you will find written reports, as well as code and necessary environments for all three CompSci-projects in the respective folders. Specific to project 2, all the trainings and codes are performed in Google Colab.
+In this repository you will find written reports, as well as code and necessary environments for all three CompSci-projects in the respective folders. Specific to Project 2, all the training and codes are written-performed in the Google Colab interface.
 
 To be able to run the code provided we recommend installing conda to handle environments:
 https://docs.conda.io/en/latest/miniconda.html
