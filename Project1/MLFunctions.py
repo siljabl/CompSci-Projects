@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split, KFold
 from sklearn.utils import resample
 from sklearn.linear_model import Lasso
 
-from Statistics import MSE, norm2
+from Statistics import MSE, norm2, sigmoid
 
 def DesignMatrix(x, y, order):
     '''
@@ -270,13 +270,13 @@ def GradientDescent(X, data, learning_rate, momentum=0, eps=1e-8, max_iter=100_0
 
 
 
-def StochasticGradientDescent(X, data, momentum=0, nepochs=10, batch_size=5, eps=1e-8):
+def StochasticGradientDescent(X, data, momentum=0, nepochs=10, batch_size=5, eps=1e-8, cost='norm2'):
     '''
     Gradient descent with fixed learning rate
     X: column vector
     data:
     gamma: learning rate
-
+    cost: if 'sigmoid' it's sigmoid, else norm2
     Tunable learning rate
     '''
     # ensure that batch_size is compatible with the size of our data
@@ -313,7 +313,10 @@ def StochasticGradientDescent(X, data, momentum=0, nepochs=10, batch_size=5, eps
             # print(beta)
 
     # compute cost
-    cost = norm2(X @ beta - data) / ndata
+    if cost == 'sigmoid':
+        cost = sigmoid(X)
+    else:
+        cost = norm2(X @ beta - data) / ndata
 
     return beta, cost
 
