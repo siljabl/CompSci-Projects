@@ -229,7 +229,6 @@ def newton_root(f,df,x0, tolerance=1e-12, max_iterations=1000) :
 
 
 
-
 def GradientDescent(X, data, learning_rate, momentum=0, eps=1e-8, max_iter=100_000):
     '''
     Gradient descent with fixed learning rate
@@ -317,6 +316,8 @@ def StochasticGradientDescent(X, data, momentum=0, nepochs=10, batch_size=5, eps
     cost = norm2(X @ beta - data) / ndata
 
     return beta, cost
+
+
 
 
 
