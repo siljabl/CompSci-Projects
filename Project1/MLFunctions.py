@@ -100,3 +100,96 @@ def cross_validation(X, data, test_size=0.2, regression_method=OLS_matrix_invers
     error =  np.mean( (y_test - y_pred)**2 )
             
     return error
+
+
+def GradientDescent(X, data, learning_rate, momentum=0, eps=1e-8, max_iter=100_000):
+    '''
+    Gradient descent with fixed learning rate
+
+    Inputs
+    X: column vector
+    data:
+    learning_rate: learning rate
+    momentum: rate of memory
+
+    Outputs
+    beta:
+    niter:
+    cost:
+    '''
+    ndata, ndims = np.shape(X)
+
+    # initial guesses for beta and the gradient
+    beta = np.random.rand(ndims)
+    grad = (2.0 / ndata) * X.T @ (X @ beta - data)
+
+    # count number of iteration
+    n_iter = 0
+    while norm2(grad) > eps:
+        grad_prev = grad
+        grad = (2.0 / ndata) * X.T @ (X @ beta - data)
+        beta = beta - momentum * grad_prev - learning_rate * grad
+
+        # break if takes too long
+        if n_iter > max_iter:
+            break
+
+        n_iter += 1
+
+    # compute cost
+    cost = norm2(X @ beta - data) / ndata
+
+    return beta, n_iter, cost
+
+
+
+def StochasticGradientDescent(X, data, momentum=0, nepochs=10, batch_size=5, eps=1e-8, cost='norm2'):
+    '''
+    Gradient descent with fixed learning rate
+    X: column vector
+    data:
+    gamma: learning rate
+    cost: if 'sigmoid' it's sigmoid, else norm2
+    Tunable learning rate
+    '''
+    # ensure that batch_size is compatible with the size of our data
+    ndata, ndims = np.shape(X)
+    assert(ndata % batch_size == 0)
+    nbatches = int(ndata / batch_size)
+
+    # splitting up data in minibatches
+    X_batch = X.reshape(nbatches, batch_size, ndims)
+    data_batch = data.reshape(nbatches, batch_size)
+
+    # initial guesses for beta and the gradient
+    beta = np.random.rand(ndims)
+    grad = (2.0 / ndata) * X.T @ (X @ beta - data)
+
+    # compute learning rate
+    H = (2 / ndata) *  X.T @ X
+    eigVal, _ = np.linalg.eig(H)
+    learning_rate = 1 / np.max(eigVal)
+
+
+    for epoch in range(nepochs):
+        for batch in range(nbatches):
+            # pick random minibatch
+            idx = np.random.randint(nbatches)
+            X_, data_ = X_batch[idx], data_batch[idx]
+
+            # computing gradient over minibatch
+            grad_prev = grad
+            grad = (2.0 / batch_size) * X_.T @ (X_ @ beta - data_)
+        
+            # update beta
+            beta = beta - momentum * grad_prev - learning_rate * grad
+            # print(beta)
+
+    # compute cost
+    if cost == 'sigmoid':
+        cost = sigmoid(X)
+    else:
+        cost = norm2(X @ beta - data) / ndata
+
+    return beta, cost
+
